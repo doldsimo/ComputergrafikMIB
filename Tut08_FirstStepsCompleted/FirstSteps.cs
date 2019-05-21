@@ -29,7 +29,12 @@ namespace Fusee.Tutorial.Core
 
             // Create a scene with a cube
             // The three components: one XForm, one Material and the Mesh
-            _cubeTransform = new TransformComponent {Scale = new float3(1, 1, 1), Translation = new float3(0, 0, 0)};
+            _cubeTransform = new TransformComponent {
+                Scale = new float3(1, 1, 1), 
+                Translation = new float3(0, 0, 0),
+                Rotation = new float3(0, 0, 0.2f)
+                
+                };
             var cubeShader = new ShaderEffectComponent
             { 
                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (0, 0, 1), new float3 (1, 1, 1),  4)
