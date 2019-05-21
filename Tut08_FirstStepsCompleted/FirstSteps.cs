@@ -12,6 +12,7 @@ using static System.Math;
 using static Fusee.Engine.Core.Input;
 using static Fusee.Engine.Core.Time;
 
+
 namespace Fusee.Tutorial.Core
 {
     public class FirstSteps : RenderCanvas
@@ -19,27 +20,31 @@ namespace Fusee.Tutorial.Core
         private SceneContainer _scene;
         private SceneRenderer _sceneRenderer;
         private float _camAngle = 0;
-        private TransformComponent _cubeTransform;
+        private TransformComponent _cubeTransform; // für die Animation von dem ersten Würfel
+        private TransformComponent _quaderTransform; // für die Animation von dem Quader
+        private TransformComponent _wuerfelDreiTransform; // für die Animation vom 3. Würfen
 
         // Init is called on startup. 
         public override void Init()
         {
-            // Set the clear color for the backbuffer to light green (intensities in R, G, B, A).
-            RC.ClearColor = new float4(0.7f, 1.0f, 0.5f, 1.0f);
+            // Set the clear color for the backbuffer to light green (intensities in R, G, B, A)
+            RC.ClearColor = new float4(0.2f, 0.2f, 0.2f, 1); // Hintergrundfarbe (r,g,b, Durchsichtigkeit)
 
             // Create a scene with a cube
             // The three components: one XForm, one Material and the Mesh
             _cubeTransform = new TransformComponent {
-                Scale = new float3(1, 1, 1), 
-                Translation = new float3(0, 0, 0),
-                Rotation = new float3(0, 0, 0.2f)
-                
-                };
+            
+                Scale = new float3(1, 1, 1), // Skalierung
+                Translation = new float3(0, 0, 0), // Position des Objektes (x,y,z)
+                Rotation = new float3(0, -0.5f, 0.2f) // Drehung an den Achsen; in Gradmaß angeben
+            
+            };
             var cubeShader = new ShaderEffectComponent
             { 
                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (0, 0, 1), new float3 (1, 1, 1),  4)
+                /* Erster float Wert Farbe des Würfels; Zweiter float Wert Farbe des Glanzlichtes  */
             };
-            var cubeMesh = SimpleMeshes.CreateCuboid(new float3(10, 10, 10));
+            var cubeMesh = SimpleMeshes.CreateCuboid(new float3(5, 5, 5)); // Größe des Quaders
 
             // Assemble the cube node containing the three components
             var cubeNode = new SceneNodeContainer();
@@ -48,10 +53,67 @@ namespace Fusee.Tutorial.Core
             cubeNode.Components.Add(cubeShader);
             cubeNode.Components.Add(cubeMesh);
 
+
+
+
+
+
+            // Eigenschaften des Quaders
+            
+            _quaderTransform = new TransformComponent{
+                Scale = new float3(1, 1, 1),
+                Translation = new float3(0, 0, 20),
+    	        Rotation = new float3(0, 0, 0)
+            }; 
+            var quaderShader = new ShaderEffectComponent{
+                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (1, 1, 1), new float3 (1, 1, 1),  4)
+            };
+            var quaderMesh = SimpleMeshes.CreateCuboid(new float3(5, 5, 20)); 
+            
+
+
+            var quader = new SceneNodeContainer();
+            quader.Components = new List<SceneComponentContainer>();
+            quader.Components.Add(_quaderTransform);
+            quader.Components.Add(quaderShader);
+            quader.Components.Add(quaderMesh);
+
+
+
+
+            // Eigenschaften 3. Würfel
+
+           _wuerfelDreiTransform = new TransformComponent{
+                Scale = new float3(1, 1, 1),
+                Translation = new float3(0, 0, 20),
+    	        Rotation = new float3(0, 0, 0)
+            }; 
+            var wuerfelDreiShader = new ShaderEffectComponent{
+                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (0.9f, 0.2f, 0.4f), new float3 (1, 1, 1),  4)
+            };
+            var wuerfelDreiMesh = SimpleMeshes.CreateCuboid(new float3(5, 5, 20)); 
+
+
+
+            var wuerfelDrei = new SceneNodeContainer();
+            wuerfelDrei.Components = new List<SceneComponentContainer>();
+            wuerfelDrei.Components.Add(_wuerfelDreiTransform);
+            wuerfelDrei.Components.Add(wuerfelDreiShader);
+            wuerfelDrei.Components.Add(wuerfelDreiMesh);
+
+
+
             // Create the scene containing the cube as the only object
+            // Hier werden alle Objekte der Szene Hinzugefügt
             _scene = new SceneContainer();
             _scene.Children = new List<SceneNodeContainer>();
             _scene.Children.Add(cubeNode);
+            _scene.Children.Add(quader);
+            _scene.Children.Add(wuerfelDrei);
+
+
+
+
 
             // Create a scene renderer holding the scene above
             _sceneRenderer = new SceneRenderer(_scene);
@@ -66,10 +128,20 @@ namespace Fusee.Tutorial.Core
             RC.Clear(ClearFlags.Color | ClearFlags.Depth);
 
             // Animate the camera angle
-            _camAngle = _camAngle + 90.0f * M.Pi/180.0f * DeltaTime ;
+            //_camAngle = _camAngle + 90.0f * M.Pi/180.0f * DeltaTime ;
 
-            // Animate the cube
-            _cubeTransform.Translation = new float3(0, 5 * M.Sin(3 * TimeSinceStart), 0);
+            // Animate the cube 1
+            _cubeTransform.Translation = new float3(0, 6 * M.Sin(2 * TimeSinceStart) + 10, 0);
+            _cubeTransform.Rotation = _cubeTransform.Rotation + new float3(0.05f * Time.DeltaTime, 0, 0); 
+            /* muss mit Time.DeltaTime multipiziert werden, damit auf jedem System die Animation gleich schnell abgespielt wird*/
+
+            // Animation Quader 2
+            _quaderTransform.Translation = new float3(6 * M.Cos(10 * TimeSinceStart), -10, 0);
+            _quaderTransform.Rotation = _quaderTransform.Rotation + new float3(0, 0.7f * Time.DeltaTime, 0.7f * Time.DeltaTime);
+            
+            //Animation Cube 3
+
+           _wuerfelDreiTransform.Translation = new float3(15, 2 * M.Sin(6 * TimeSinceStart), 15 * M.Sin(1 * TimeSinceStart));
 
             // Setup the camera 
             RC.View = float4x4.CreateTranslation(0, 0, 50) * float4x4.CreateRotationY(_camAngle);
