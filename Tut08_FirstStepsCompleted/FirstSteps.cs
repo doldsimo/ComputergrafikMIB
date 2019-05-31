@@ -23,6 +23,7 @@ namespace Fusee.Tutorial.Core
         private TransformComponent _cubeTransform; // für die Animation von dem ersten Würfel
         private TransformComponent _quaderTransform; // für die Animation von dem Quader
         private TransformComponent _wuerfelDreiTransform; // für die Animation vom 3. Würfen
+        private ShaderEffectComponent _wuerfelDreiShader;
 
         // Init is called on startup. 
         public override void Init()
@@ -88,7 +89,7 @@ namespace Fusee.Tutorial.Core
                 Translation = new float3(0, 0, 20),
     	        Rotation = new float3(0, 0, 0)
             }; 
-            var wuerfelDreiShader = new ShaderEffectComponent{
+            _wuerfelDreiShader = new ShaderEffectComponent{
                  Effect = SimpleMeshes.MakeShaderEffect(new float3 (0.9f, 0.2f, 0.4f), new float3 (1, 1, 1),  4)
             };
             var wuerfelDreiMesh = SimpleMeshes.CreateCuboid(new float3(5, 5, 20)); 
@@ -98,7 +99,7 @@ namespace Fusee.Tutorial.Core
             var wuerfelDrei = new SceneNodeContainer();
             wuerfelDrei.Components = new List<SceneComponentContainer>();
             wuerfelDrei.Components.Add(_wuerfelDreiTransform);
-            wuerfelDrei.Components.Add(wuerfelDreiShader);
+            wuerfelDrei.Components.Add(_wuerfelDreiShader);
             wuerfelDrei.Components.Add(wuerfelDreiMesh);
 
 
@@ -122,6 +123,8 @@ namespace Fusee.Tutorial.Core
         // RenderAFrame is called once a frame
         public override void RenderAFrame()
         {
+
+            Console.WriteLine("hallo");
             Diagnostics.Log(TimeSinceStart);
 
             // Clear the backbuffer
@@ -134,15 +137,16 @@ namespace Fusee.Tutorial.Core
             _cubeTransform.Translation = new float3(0, 6 * M.Sin(2 * TimeSinceStart) + 10, 0);
             _cubeTransform.Rotation = _cubeTransform.Rotation + new float3(0.05f * Time.DeltaTime, 0, 0); 
             /* muss mit Time.DeltaTime multipiziert werden, damit auf jedem System die Animation gleich schnell abgespielt wird*/
-
+            _cubeTransform.Scale = new float3(1 * M.Sin(1 * TimeSinceStart), 1, 1 * M.Sin(4 * TimeSinceStart));
             // Animation Quader 2
             _quaderTransform.Translation = new float3(6 * M.Cos(10 * TimeSinceStart), -10, 0);
             _quaderTransform.Rotation = _quaderTransform.Rotation + new float3(0, 0.7f * Time.DeltaTime, 0.7f * Time.DeltaTime);
             
             //Animation Cube 3
 
-           _wuerfelDreiTransform.Translation = new float3(15, 2 * M.Sin(6 * TimeSinceStart), 15 * M.Sin(1 * TimeSinceStart));
-
+            _wuerfelDreiTransform.Translation = new float3(15, 2 * M.Sin(6 * TimeSinceStart), 15 * M.Sin(1 * TimeSinceStart));
+            _wuerfelDreiShader.Effect = SimpleMeshes.MakeShaderEffect(new float3 (1, M.Sin(3 * TimeSinceStart), 0), new float3 (1, 1, 1),  4);
+            
             // Setup the camera 
             RC.View = float4x4.CreateTranslation(0, 0, 50) * float4x4.CreateRotationY(_camAngle);
 
