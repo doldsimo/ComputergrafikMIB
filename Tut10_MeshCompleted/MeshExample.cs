@@ -45,12 +45,12 @@ namespace Fusee.Tutorial.Core
                            // SHADER EFFECT COMPONENT
                             new ShaderEffectComponent
                             {
-                                Effect = SimpleMeshes.MakeShaderEffect(new float3(0.7f, 0.7f, 0.7f), new float3(1, 1, 1), 5)
+                                Effect = SimpleMeshes.MakeShaderEffect(new float3(0.1f, 0.3f, 1f), new float3(1, 1, 1), 5)
                             },
 
                             // MESH COMPONENT
                             // SimpleMeshes.CreateCuboid(new float3(10, 10, 10))
-                            SimpleMeshes.CreateCylinder(5, 10, 8)
+                            SimpleMeshes.CreateCylinder(7, 18, 12)
                         }
                     },
                 }
@@ -61,7 +61,7 @@ namespace Fusee.Tutorial.Core
         public override void Init()
         {
             // Set the clear color for the backbuffer to white (100% intentsity in all color channels R, G, B, A).
-            RC.ClearColor = new float4(0.8f, 0.9f, 0.7f, 1);
+            RC.ClearColor = new float4(0.5f, 0.7f, 0.2f, 1);
 
             _scene = CreateScene();
 
